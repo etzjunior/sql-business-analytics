@@ -1,11 +1,22 @@
 -- ============================================
 -- 05 PURCHASE FUNNEL ANALYSIS
 -- E-commerce Business Analytics
+-- Database: ecommerce_analytics
+-- ============================================
+--
+-- Purpose:
+-- Analyze the website purchase funnel and identify
+-- where users drop out between product discovery
+-- and completed orders.
+--
+-- Funnel stages:
+-- Products → Cart → Shipping → Billing → Purchase
 -- ============================================
 
 
--- 1. Count unique sessions reaching each
---    stage of the purchase funnel
+-- 1. Count sessions reaching each funnel stage
+-- Identifies how many unique website sessions
+-- reached each stage of the purchase journey.
 
 WITH funnel AS (
     SELECT
@@ -61,35 +72,47 @@ FROM funnel;
 
 
 -- 2. Calculate conversion between funnel stages
+-- Measures the percentage of sessions progressing
+-- from one funnel stage to the next.
 
 WITH funnel AS (
     SELECT
         website_session_id,
 
-        MAX(CASE
-            WHEN pageview_url = '/products'
-            THEN 1 ELSE 0
-        END) AS viewed_products,
+        MAX(
+            CASE
+                WHEN pageview_url = '/products'
+                THEN 1 ELSE 0
+            END
+        ) AS viewed_products,
 
-        MAX(CASE
-            WHEN pageview_url = '/cart'
-            THEN 1 ELSE 0
-        END) AS viewed_cart,
+        MAX(
+            CASE
+                WHEN pageview_url = '/cart'
+                THEN 1 ELSE 0
+            END
+        ) AS viewed_cart,
 
-        MAX(CASE
-            WHEN pageview_url = '/shipping'
-            THEN 1 ELSE 0
-        END) AS viewed_shipping,
+        MAX(
+            CASE
+                WHEN pageview_url = '/shipping'
+                THEN 1 ELSE 0
+            END
+        ) AS viewed_shipping,
 
-        MAX(CASE
-            WHEN pageview_url = '/billing-2'
-            THEN 1 ELSE 0
-        END) AS viewed_billing,
+        MAX(
+            CASE
+                WHEN pageview_url = '/billing-2'
+                THEN 1 ELSE 0
+            END
+        ) AS viewed_billing,
 
-        MAX(CASE
-            WHEN pageview_url = '/thank-you-for-your-order'
-            THEN 1 ELSE 0
-        END) AS completed_order
+        MAX(
+            CASE
+                WHEN pageview_url = '/thank-you-for-your-order'
+                THEN 1 ELSE 0
+            END
+        ) AS completed_order
 
     FROM website_pageviews
     GROUP BY website_session_id
@@ -113,27 +136,32 @@ SELECT
     completed,
 
     ROUND(
-        cart * 100.0 / NULLIF(products, 0),
+        cart * 100.0
+        / NULLIF(products, 0),
         2
     ) AS products_to_cart_pct,
 
     ROUND(
-        shipping * 100.0 / NULLIF(cart, 0),
+        shipping * 100.0
+        / NULLIF(cart, 0),
         2
     ) AS cart_to_shipping_pct,
 
     ROUND(
-        billing * 100.0 / NULLIF(shipping, 0),
+        billing * 100.0
+        / NULLIF(shipping, 0),
         2
     ) AS shipping_to_billing_pct,
 
     ROUND(
-        completed * 100.0 / NULLIF(billing, 0),
+        completed * 100.0
+        / NULLIF(billing, 0),
         2
     ) AS billing_to_purchase_pct,
 
     ROUND(
-        completed * 100.0 / NULLIF(products, 0),
+        completed * 100.0
+        / NULLIF(products, 0),
         2
     ) AS overall_conversion_pct
 
