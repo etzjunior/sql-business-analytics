@@ -45,21 +45,19 @@ The raw dataset is stored locally and excluded from the GitHub repository.
 
 The database contains six main tables connected through primary and foreign key relationships:
 
-```text
-products
-    │
-    ↓
-order_items ← order_item_refunds
-    ↑
-    │
-orders
-    │
-    ↓
-website_sessions
-    │
-    ↓
-website_pageviews
-```
+    products
+        │
+        ↓
+    order_items ← order_item_refunds
+        ↑
+        │
+    orders
+        │
+        ↓
+    website_sessions
+        │
+        ↓
+    website_pageviews
 
 The tables represent different levels of detail, so data grain was considered carefully when joining tables to avoid duplicated metrics.
 
@@ -77,13 +75,31 @@ The analysis is organized into seven SQL scripts:
 | `06_marketing_analysis.sql` | Marketing channel performance |
 | `07_refunds_profitability.sql` | Refunds, profitability and product margins |
 
+## Key SQL Skills Demonstrated
+
+- Data exploration and validation
+- Aggregations using `COUNT`, `SUM`, `AVG`, `MIN`, and `MAX`
+- `GROUP BY` and `HAVING`
+- `INNER JOIN` and `LEFT JOIN`
+- `COUNT(DISTINCT ...)`
+- `CASE` statements
+- Subqueries
+- Common Table Expressions (CTEs)
+- Window functions such as `LAG`
+- Date-based analysis using `EXTRACT`
+- Funnel analysis
+- KPI and conversion-rate calculations
+- Profitability and margin analysis
+- Handling `NULL` values with `COALESCE`
+- Preventing metric duplication through careful data-grain management
+
 ## Key Findings
 
 ### Revenue Performance
 
 2014 was the strongest year in the dataset, generating more than $1 million in revenue.
 
-Average order value increased from $49.99 in 2012 to $63.80 in 2014, indicating an increase in the amount customers spent per order.
+Average order value increased from $49.99 in 2012 to $63.80 in 2014, indicating that customers were spending more per order.
 
 ### Product Profitability
 
@@ -117,25 +133,59 @@ Desktop therefore converted at approximately 2.75 times the mobile rate.
 
 This suggests that the mobile purchasing experience could be investigated for potential conversion barriers.
 
+### Website Conversion Funnel
+
+The largest drop-off occurred between the product page and cart.
+
+- Products → Cart: 36.35%
+- Cart → Shipping: 67.91%
+- Shipping → Billing: 75.12%
+- Billing → Purchase: 66.71%
+- Product → Purchase: 12.37%
+
+This makes the product-to-cart stage a key area for further investigation.
+
+### Marketing Channel Performance
+
+gsearch generated the highest traffic, orders, and revenue.
+
+However, Direct / Unknown and bsearch achieved higher conversion rates than gsearch.
+
+socialbook had the lowest conversion rate at 3.21%.
+
+This shows why marketing performance should be evaluated using both traffic volume and conversion efficiency.
+
 ## Business Recommendations
 
 ### 1. Investigate Mobile Conversion
 
 Review the mobile product, cart, shipping, and checkout experience to identify potential conversion barriers.
 
-### 2. Investigate Product Refunds
+### 2. Improve Product-to-Cart Conversion
+
+The largest funnel drop-off occurs between product pages and the cart, with only 36.35% of product-stage sessions reaching the cart.
+
+The business could investigate product-page design, pricing presentation, product information, calls to action, and mobile usability.
+
+### 3. Investigate Product Refunds
 
 The Birthday Sugar Panda has the highest refund rate at 6.04%.
 
 Investigating refund reasons and customer feedback could help identify potential product or customer-experience issues.
 
-### 3. Improve Customer Retention
+### 4. Explore Customer Retention
 
 With only 1.86% of customers placing multiple orders, customer retention represents a potential growth opportunity.
 
 Customer segmentation and post-purchase engagement strategies could be investigated to encourage repeat purchases.
 
-### 4. Balance Revenue and Profitability
+### 5. Evaluate Marketing Efficiency
+
+gsearch generates the most revenue and orders, but other channels achieve higher conversion rates.
+
+Marketing decisions should therefore consider traffic volume, conversion rate, and revenue together when evaluating channel performance.
+
+### 6. Balance Revenue and Profitability
 
 The Original Mr. Fuzzy generates the most total profit, while the Hudson River Mini Bear has the highest profit margin.
 
@@ -155,6 +205,26 @@ The analysis also uses `COUNT(DISTINCT ...)` where appropriate when measuring se
 
 - [Data Dictionary](docs/data_dictionary.md)
 - [Business Findings](docs/findings.md)
+
+## Project Structure
+
+    sql-business-analytics/
+    │
+    ├── sql/
+    │   ├── 01_data_exploration.sql
+    │   ├── 02_sales_analysis.sql
+    │   ├── 03_customer_analysis.sql
+    │   ├── 04_website_analysis.sql
+    │   ├── 05_funnel_analysis.sql
+    │   ├── 06_marketing_analysis.sql
+    │   └── 07_refunds_profitability.sql
+    │
+    ├── docs/
+    │   ├── data_dictionary.md
+    │   └── findings.md
+    │
+    ├── README.md
+    └── .gitignore
 
 ## Author
 
